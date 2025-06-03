@@ -1,0 +1,144 @@
+{
+    "intro": {
+      "title": "The Little Blue Gopher",
+      "story": [
+        "You are a little blue gopher working in an office building. You've been working in this office building for a couple of years, and you're starting to feel like you need a change. You aren't sure what you want to do, but you are definitely sure that you want something different.",
+        "You finish up an update to an application you've been working on and push it to production. The application had a pretty brutal bug that you found and corrected. You're proud of your work, but you don't feel particularly challenged."
+      ],
+      "options": [
+        {
+          "text": "Leave work and go to the bar across the street",
+          "arc": "leave"
+        },
+        {
+          "text": "You decide to stay late and work on a side project",
+          "arc": "work-late"
+        }
+      ]
+    },
+    "leave": {
+      "title": "You leave work",
+      "story": [
+        "You walk across the street to the bar and order a drink. The bartender asks you how your day was, and you tell him that you're feeling like you need to find a new job. Maybe you need to find a new city too. You're not sure what you want to do.",
+        "As you're complaining, a man in a suit walks over and tells you he couldn't help but overhear you. He says he may have a job opportunity for you. You look at him with a bit of suspicion."
+      ],
+      "options": [
+        {
+          "text": "Listen to the man in the suit",
+          "arc": "suit"
+        },
+        {
+          "text": "Politely decline and go home",
+          "arc": "home"
+        }
+      ]
+    },
+    "work-late": {
+      "title": "Working Late",
+      "story": [
+        "You decide to stay late and work on a side project you've been meaning to get to. You've been learning a new programming language lately, and you thought this would be a good time to practice it.",
+        "You start working and you realize you're having a lot of fun. You're reminded of why you became a programmer in the first place, and you feel like you're learning a lot. You could keep working on this project, or you could go home and get some rest."
+      ],
+      "options": [
+        {
+          "text": "Keep working on your side project",
+          "arc": "project"
+        },
+        {
+          "text": "Go home and get some rest",
+          "arc": "home"
+        }
+      ]
+    },
+    "suit": {
+      "title": "The Man in the Suit",
+      "story": [
+        "The man in the suit tells you that he works for a startup, and they're looking for a skilled developer. He says they're working on something big, and they could use someone with your experience.",
+        "You're intrigued, but also a bit skeptical. You've heard about startups before, and you know they can be pretty risky. On the other hand, you're looking for a change, and this could be exactly what you need."
+      ],
+      "options": [
+        {
+          "text": "Ask him about the startup",
+          "arc": "startup"
+        },
+        {
+          "text": "Thank him but say you're not interested",
+          "arc": "home"
+        }
+      ]
+    },
+    "startup": {
+      "title": "The Startup Opportunity",
+      "story": [
+        "The man tells you about his startup. They're trying to build a new platform that connects gophers from around the world. He says they're looking for a lead developer, and the role would come with equity in the company.",
+        "It sounds interesting, and it definitely sounds like it would be a big change from your current job. You could take a risk and join the startup, or you could stick with what you know and stay at your current job."
+      ],
+      "options": [
+        {
+          "text": "Accept the job offer",
+          "arc": "new-job"
+        },
+        {
+          "text": "Decline and stick with your current job",
+          "arc": "stay-same"
+        }
+      ]
+    },
+    "project": {
+      "title": "Your Side Project",
+      "story": [
+        "You continue working on your side project, and you're making great progress. You're learning a lot, and you're having a lot of fun. You realize that this is what you want to be doing with your career.",
+        "You decide that you want to turn this side project into a real business. You're excited about the possibilities, but you're also a bit scared about leaving your steady job."
+      ],
+      "options": [
+        {
+          "text": "Quit your job and work on your project full time",
+          "arc": "entrepreneur"
+        },
+        {
+          "text": "Keep your job and work on the project on the side",
+          "arc": "side-hustle"
+        }
+      ]
+    },
+    "home": {
+      "title": "A Quiet Evening",
+      "story": [
+        "You decide to go home and get some rest. You're feeling a bit overwhelmed by all the changes you're considering, and you think it might be good to take some time to think things through.",
+        "As you're walking home, you realize that maybe you don't need to make any big changes right now. Maybe you're happy with your life the way it is, and that's okay too."
+      ],
+      "options": []
+    },
+    "new-job": {
+      "title": "A New Adventure",
+      "story": [
+        "You decide to take the leap and join the startup. It's a big risk, but you're excited about the possibilities. You quit your old job and start working with the startup.",
+        "The work is challenging and exciting, and you're learning a lot. You're glad you took the risk, and you're excited to see where this new adventure takes you."
+      ],
+      "options": []
+    },
+    "stay-same": {
+      "title": "The Safe Choice",
+      "story": [
+        "You decide to stick with your current job. It's not the most exciting choice, but it's safe and stable. You thank the man for the opportunity, but tell him you're not ready for that kind of change.",
+        "You go back to work the next day, and while you're still not completely satisfied, you're okay with your decision. Sometimes the safe choice is the right choice."
+      ],
+      "options": []
+    },
+    "entrepreneur": {
+      "title": "The Entrepreneur",
+      "story": [
+        "You quit your job and decide to work on your side project full time. It's scary, but you're excited about the possibilities. You spend the next few months working on your project, and you're making great progress.",
+        "After a lot of hard work, you launch your product and it's a success! You're proud of what you've accomplished, and you're glad you took the risk."
+      ],
+      "options": []
+    },
+    "side-hustle": {
+      "title": "The Best of Both Worlds",
+      "story": [
+        "You decide to keep your job and work on your project on the side. It's a lot of work, but you're managing to balance both. You're making progress on your project, and you still have the security of your day job.",
+        "Eventually, your side project becomes successful enough that you can quit your day job and work on it full time. You're glad you took a cautious approach and built up your project slowly."
+      ],
+      "options": []
+    }
+  }
