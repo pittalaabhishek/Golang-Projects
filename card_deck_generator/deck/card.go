@@ -35,13 +35,11 @@ const (
 	King
 )
 
-// Card represents a single playing card
 type Card struct {
 	Suit Suit
 	Rank Rank
 }
 
-// String returns a string representation of the card
 func (c Card) String() string {
 	if c.Suit == Joker {
 		return "Joker"
@@ -49,12 +47,10 @@ func (c Card) String() string {
 	return fmt.Sprintf("%s of %ss", c.Rank, c.Suit)
 }
 
-// IsJoker returns true if the card is a joker
 func (c Card) IsJoker() bool {
 	return c.Suit == Joker
 }
 
-// NewJoker creates a new joker card
 func NewJoker() Card {
 	return Card{Suit: Joker, Rank: Ace} // Rank doesn't matter for jokers
 }

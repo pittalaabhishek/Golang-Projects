@@ -86,17 +86,6 @@ func WithoutRanks(ranks ...Rank) func([]Card) []Card {
 	})
 }
 
-func WithoutSuits(suits ...Suit) func([]Card) []Card {
-	suitMap := make(map[Suit]bool)
-	for _, suit := range suits {
-		suitMap[suit] = true
-	}
-	
-	return Filter(func(card Card) bool {
-		return !suitMap[card.Suit]
-	})
-}
-
 func WithDecks(n int) func([]Card) []Card {
 	return func(cards []Card) []Card {
 		var result []Card
