@@ -13,14 +13,14 @@ func recoverWrap(handler http.HandlerFunc) http.HandlerFunc {
 		defer func() {
 			if rec := recover(); rec != nil {
 				stackTrace := debug.Stack()
-				
+
 				log.Printf("PANIC: %v\n%s", rec, stackTrace)
-				
+
 				w.Header().Set("Content-Type", "text/plain")
 				w.WriteHeader(http.StatusInternalServerError)
-				
+
 				isDev := os.Getenv("ENV") == "development"
-				
+
 				if isDev {
 					fmt.Fprintf(w, "Error: %v\n\nStack Trace:\n%s", rec, stackTrace)
 				} else {
@@ -28,7 +28,7 @@ func recoverWrap(handler http.HandlerFunc) http.HandlerFunc {
 				}
 			}
 		}()
-		
+
 		handler(w, r)
 	}
 }
@@ -38,7 +38,7 @@ func main() {
 	mux.HandleFunc("/panic/", recoverWrap(panicDemo))
 	mux.HandleFunc("/panic-after/", recoverWrap(panicAfterDemo))
 	mux.HandleFunc("/", recoverWrap(hello))
-	
+
 	log.Fatal(http.ListenAndServe(":3006", mux))
 }
 
