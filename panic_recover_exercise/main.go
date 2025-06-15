@@ -9,22 +9,26 @@ import (
 )
 
 func recoverWrap(handler http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		defer func() {
-			if rec := recover(); rec != nil {
-				stackTrace := debug.Stack()
-				log.Printf("PANIC: %v\n%s", rec, stackTrace)
-				w.Header().Set("Content-Type", "text/plain")
-				w.WriteHeader(http.StatusInternalServerError)
-				isDev := os.Getenv("ENV") == "development"
-				if isDev {
-					fmt.Fprintf(w, "Error: %v\n\nStack Trace:\n%s", rec, stackTrace)
-				} else {
-					fmt.Fprint(w, "Something went wrong")
-				}
-			}
-		}()
-
+  return func(w http.ResponseWriter, r *http.Request) {
+	  defer func() {
+		if rec := recover(); rec != nil {
+		  stackTrace := debug.Stack()
+				
+		  log.Printf("PANIC: %v\n%s", rec, stackTrace)
+				
+		  w.Header().Set("Content-Type", "text/plain")
+		  w.WriteHeader(http.StatusInternalServerError)
+				
+		  isDev := os.Getenv("ENV") == "development"
+				
+		  if isDev {
+		    fmt.Fprintf(w, "Error: %v\n\nStack Trace:\n%s", rec, stackTrace)
+		  } else {
+		    fmt.Fprint(w, "Something went wrong")
+		  }
+		}
+	  }()
+		
 		handler(w, r)
 	}
 }
