@@ -1,11 +1,21 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
+	"path/filepath"
+	"regexp"
 	"runtime/debug"
+	"strconv"
+	"strings"
+
+	"github.com/alecthomas/chroma/formatters/html"
+	"github.com/alecthomas/chroma/lexers"
+	"github.com/alecthomas/chroma/styles"
 )
 
 func recoverWrap(handler http.HandlerFunc) http.HandlerFunc {
@@ -13,24 +23,43 @@ func recoverWrap(handler http.HandlerFunc) http.HandlerFunc {
 		defer func() {
 			if rec := recover(); rec != nil {
 				stackTrace := debug.Stack()
-
 				log.Printf("PANIC: %v\n%s", rec, stackTrace)
-
-				w.Header().Set("Content-Type", "text/plain")
+				w.Header().Set("Content-Type", "text/html; charset=utf-8")
 				w.WriteHeader(http.StatusInternalServerError)
-
-				isDev := os.Getenv("ENV") == "development"
-
-				if isDev {
-					fmt.Fprintf(w, "Error: %v\n\nStack Trace:\n%s", rec, stackTrace)
-				} else {
-					fmt.Fprint(w, "Something went wrong")
-				}
+				fmt.Fprintf(w, "Panic: %v\n\n", rec)
+				fmt.Fprint(w, formatStackTrace(string(stackTrace)))
 			}
 		}()
 
-		handler(w, r)
+		handler.ServeHTTP(w, r)
 	}
+}
+
+func formatStackTrace(stack string) string {
+	lines := strings.Split(stack, "\n")
+	var formattedOutput strings.Builder
+
+	re := regexp.MustCompile(`^(\s*)(\S+\.go):(\d+)`)
+
+	for _, line := range lines {
+		matches := re.FindStringSubmatch(line)
+		if len(matches) == 4 {
+			indent := matches[1]
+			filePath := matches[2]
+			lineNumber := matches[3]
+
+			if _, err := os.Stat(filePath); err == nil {
+				encodedFilePath := url.QueryEscape(filePath)
+				debugLink := fmt.Sprintf("/debug/source?filepath=%s&line=%s", encodedFilePath, lineNumber)
+				formattedOutput.WriteString(fmt.Sprintf("%s<a href=\"%s\">%s:%s</a>\n", indent, debugLink, filePath, lineNumber))
+			} else {
+				formattedOutput.WriteString(line + "\n")
+			}
+		} else {
+			formattedOutput.WriteString(line + "\n")
+		}
+	}
+	return formattedOutput.String()
 }
 
 func main() {
@@ -39,6 +68,7 @@ func main() {
 	mux.HandleFunc("/panic-after/", recoverWrap(panicAfterDemo))
 	mux.HandleFunc("/", recoverWrap(hello))
 
+	log.Println("Server listening on :3006 (Set ENV=development for debug features)")
 	log.Fatal(http.ListenAndServe(":3006", mux))
 }
 
@@ -52,9 +82,9 @@ func panicAfterDemo(w http.ResponseWriter, r *http.Request) {
 }
 
 func funcThatPanics() {
-	panic("Oh no!")
+	panic("Oops! A controlled panic.")
 }
 
 func hello(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "<h1>Hello!</h1>")
+	fmt.Fprintln(w, "<h1>Hello, world!</h1>")
 }
