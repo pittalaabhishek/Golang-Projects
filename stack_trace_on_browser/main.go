@@ -62,11 +62,81 @@ func formatStackTrace(stack string) string {
 	return formattedOutput.String()
 }
 
+func sourceHandler(w http.ResponseWriter, r *http.Request) {
+	filePath := r.URL.Query().Get("filepath")
+	lineStr := r.URL.Query().Get("line")
+	highlightLine := 0
+
+	if line, err := strconv.Atoi(lineStr); err == nil {
+		highlightLine = line
+	}
+
+	if filePath == "" {
+		http.Error(w, "Missing 'filepath' parameter", http.StatusBadRequest)
+		return
+	}
+
+	absFilePath, err := filepath.Abs(filePath)
+	if err != nil {
+		http.Error(w, "Invalid path", http.StatusBadRequest)
+		return
+	}
+	wd, _ := os.Getwd()
+	if !strings.HasPrefix(absFilePath, wd) {
+		http.Error(w, "Access denied", http.StatusForbidden)
+		return
+	}
+
+	code, err := os.ReadFile(filePath)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error reading file: %v", err), http.StatusNotFound)
+		return
+	}
+
+	lexer := lexers.Get("go")
+	if lexer == nil {
+		lexer = lexers.Fallback
+	}
+	
+	var formatter *html.Formatter
+	if highlightLine > 0 {
+		formatter = html.New(
+			html.WithLineNumbers(true),
+			html.LineNumbersInTable(true),
+			html.HighlightLines([][2]int{{highlightLine, highlightLine}}),
+		)
+	} else {
+		formatter = html.New(
+			html.WithLineNumbers(true),
+			html.LineNumbersInTable(true),
+		)
+	}
+	
+	style := styles.GitHub
+
+	iterator, err := lexer.Tokenise(nil, string(code))
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error tokenizing code: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	var buf bytes.Buffer
+	err = formatter.Format(&buf, style, iterator)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error formatting code: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	fmt.Fprint(w, buf.String())
+}
+
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/panic/", recoverWrap(panicDemo))
 	mux.HandleFunc("/panic-after/", recoverWrap(panicAfterDemo))
 	mux.HandleFunc("/", recoverWrap(hello))
+	mux.HandleFunc("/debug/source", sourceHandler)
 
 	log.Println("Server listening on :3006 (Set ENV=development for debug features)")
 	log.Fatal(http.ListenAndServe(":3006", mux))
