@@ -3,20 +3,21 @@ package main
 import (
 	"fmt"
 	"os"
-	"github.com/ajstarks/svgo" // Import the svgo library
+
+	svg "github.com/ajstarks/svgo"
 )
 
 func main() {
-	data := []int{10, 33, 73, 64} // Example data
+	data := []int{10, 33, 73, 64}
 
 	const (
-		width     = 500
-		height    = 300
-		barWidth  = 60
-		barMargin = 20	
-		chartPadding = 50 	
+		width        = 500
+		height       = 300
+		barWidth     = 60
+		barMargin    = 20
+		chartPadding = 50
 	)
-	
+
 	chartWidth := (len(data) * barWidth) + ((len(data) - 1) * barMargin)
 	chartHeight := height - (2 * chartPadding)
 
