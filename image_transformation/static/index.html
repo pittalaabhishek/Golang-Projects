@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Transformer</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #0056b3; }
+        .message { text-align: center; margin-bottom: 20px; font-size: 1.1em; color: #555; }
+        .form-section { margin-top: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        input[type="file"] { margin-bottom: 10px; }
+        input[type="submit"], button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+        }
+        input[type="submit"]:hover, button:hover { background-color: #0056b3; }
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .image-item {
+            border: 1px solid #eee;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .image-item img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .image-item form {
+            display: inline-block; /* For button alignment */
+            margin-top: 5px;
+        }
+        .image-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .back-button {
+            background-color: #6c757d;
+            margin-right: 10px;
+        }
+        .back-button:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Image Transformer</h1>
+        <p class="message">{{.Message}}</p>
+
+        {{if .ShowUploadForm}}
+            <div class="form-section">
+                <form action="/upload" method="post" enctype="multipart/form-data">
+                    <label for="image">Choose Image:</label><br>
+                    <input type="file" id="image" name="image" accept="image/*" required><br>
+                    <input type="submit" value="Upload Image">
+                </form>
+            </div>
+        {{else}}
+            <div class="form-section">
+                <div class="image-gallery">
+                    {{range .Images}}
+                        <div class="image-item">
+                            <img src="/uploads/{{.Filename}}" alt="{{.Filename}}">
+                            <div class="image-label">
+                                {{/* Label for Mode selection step */}}
+                                {{if eq $.CurrentStep "selectMode"}}
+                                    {{ $parts := split .Filename "_mode" }}
+                                    {{ $modeNumStr := index $parts 1 }}
+                                    {{ $modeID := (index (split $modeNumStr "-") 0) }}
+                                    Mode: {{ $modeID }}
+                                {{/* Label for N selection step */}}
+                                {{else if eq $.CurrentStep "selectN"}}
+                                    {{ $parts := split .Filename "_n" }}
+                                    {{ $nValStr := index $parts 1 }}
+                                    {{ $nVal := (index (split $nValStr "-") 0) }}
+                                    Shapes (n): {{ $nVal }}
+                                {{/* Label for Final step */}}
+                                {{else if eq $.CurrentStep "final"}}
+                                    Final Image
+                                {{end}}
+                            </div>
+
+                            <form action="/transform" method="post">
+                                <input type="hidden" name="original_file_path" value="{{$.OriginalFilePath}}">
+                                <input type="hidden" name="selected_mode" value="{{$.SelectedMode}}">
+                                <input type="hidden" name="selected_n" value="{{$.SelectedN}}">
+
+                                {{if eq $.CurrentStep "selectMode"}}
+                                    {{/* Pass the selected mode ID to the next step */}}
+                                    {{ $parts := split .Filename "_mode" }}
+                                    {{ $modeNumStr := index $parts 1 }}
+                                    {{ $modeID := (index (split $modeNumStr "-") 0) }}
+                                    <input type="hidden" name="mode_id" value="{{$modeID}}">
+                                    <input type="hidden" name="current_step" value="selectMode">
+                                    <button type="submit">Select This Mode</button>
+                                {{else if eq $.CurrentStep "selectN"}}
+                                    {{/* Pass the selected N value to the next step */}}
+                                    {{ $parts := split .Filename "_n" }}
+                                    {{ $nValStr := index $parts 1 }}
+                                    {{ $nVal := (index (split $nValStr "-") 0) }}
+                                    <input type="hidden" name="n_value" value="{{$nVal}}">
+                                    <input type="hidden" name="current_step" value="selectN">
+                                    <button type="submit">Select This 'n'</button>
+                                {{else if eq $.CurrentStep "final"}}
+                                    {{/* For the final image, provide a download button */}}
+                                    <input type="hidden" name="final_image_path" value="{{.Path}}">
+                                    <input type="hidden" name="current_step" value="downloadFinal">
+                                    <button type="submit">Download Final Image</button>
+                                {{end}}
+                            </form>
+                        </div>
+                    {{end}}
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                {{if or (eq .CurrentStep "selectN") (eq .CurrentStep "final")}}
+                    <a href="/"><button class="back-button">Start Over</button></a>
+                {{end}}
+            </div>
+        {{end}}
+    </div>
+</body>
+</html>
