@@ -132,64 +132,8 @@ import (
 func main() {
 	studentName := "Pittala Abhishek"
 	
-	generateCertificate(studentName, "gophercises_certificate.pdf")
+	generateStyledCertificate(studentName, "gophercises_certificate.pdf")
 	fmt.Println("Certificate generated: gophercises_certificate.pdf")
-}
-
-func generateCertificate(name, filename string) {
-	pdf := gofpdf.New("L", "mm", "A4", "")
-	pdf.AddPage()
-
-	pdf.SetMargins(20, 20, 20)
-
-	pdf.SetLineWidth(2)
-	pdf.SetDrawColor(0, 0, 0)
-	pdf.Rect(10, 10, 277, 190, "D")
-	pdf.SetLineWidth(1)
-	pdf.Rect(15, 15, 267, 180, "D")
-
-	pdf.SetFont("Arial", "B", 32)
-	pdf.SetTextColor(0, 0, 0)
-	pdf.Ln(30)
-	pdf.CellFormat(267, 20, "Certificate of Completion", "", 0, "C", false, 0, "")
-	pdf.Ln(25)
-
-	pdf.SetFont("Arial", "I", 16)
-	pdf.CellFormat(267, 10, "This is to certify that", "", 0, "C", false, 0, "")
-	pdf.Ln(20)
-
-	pdf.SetFont("Arial", "B", 24)
-	pdf.SetTextColor(0, 100, 0)
-	pdf.CellFormat(267, 15, name, "", 0, "C", false, 0, "")
-	pdf.Ln(25)
-
-	pdf.SetFont("Arial", "I", 16)
-	pdf.SetTextColor(0, 0, 0)
-	pdf.CellFormat(267, 10, "has successfully completed the", "", 0, "C", false, 0, "")
-	pdf.Ln(15)
-
-	pdf.SetFont("Arial", "B", 20)
-	pdf.SetTextColor(0, 0, 150)
-	pdf.CellFormat(267, 15, "Gophercises Course", "", 0, "C", false, 0, "")
-	pdf.Ln(20)
-
-	pdf.SetFont("Arial", "", 12)
-	pdf.SetTextColor(0, 0, 0)
-	currentDate := time.Now().Format("January 2, 2006")
-	
-	pdf.SetXY(50, 160)
-	pdf.CellFormat(80, 10, "Date: "+currentDate, "", 0, "L", false, 0, "")
-	
-	pdf.SetXY(180, 160)
-	pdf.CellFormat(80, 10, "Instructor: Jon Calhoun", "", 0, "L", false, 0, "")
-	
-	pdf.SetXY(180, 170)
-	pdf.CellFormat(80, 1, "", "B", 0, "L", false, 0, "")
-
-	err := pdf.OutputFileAndClose(filename)
-	if err != nil {
-		panic(err)
-	}
 }
 
 func generateStyledCertificate(name, filename string) {
