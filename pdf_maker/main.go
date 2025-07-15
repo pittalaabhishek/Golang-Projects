@@ -186,17 +186,6 @@ func generateCertificate(name, filename string) {
 	pdf.SetXY(180, 170)
 	pdf.CellFormat(80, 1, "", "B", 0, "L", false, 0, "")
 
-	pdf.SetFont("Arial", "I", 10)
-	pdf.SetXY(20, 185)
-	pdf.CellFormat(267, 5, "Congratulations on completing all the Gophercises!", "", 0, "C", false, 0, "")
-
-	pdf.SetFont("Arial", "B", 40)
-	pdf.SetTextColor(200, 200, 200) // Light gray
-	pdf.SetXY(20, 80)
-	pdf.CellFormat(40, 40, "*", "", 0, "C", false, 0, "")
-	pdf.SetXY(230, 80)
-	pdf.CellFormat(40, 40, "*", "", 0, "C", false, 0, "")
-
 	err := pdf.OutputFileAndClose(filename)
 	if err != nil {
 		panic(err)
